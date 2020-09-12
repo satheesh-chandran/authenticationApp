@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <link rel="stylesheet" href="./styles/index.css">
+  </head>
+
+  <body>
+    <h1>Authorization Server</h1>
+    <h2>Create New App</h2>
+    <div id="container">
+      <p class="invisible">Fields shouldn't be empty</p>
+      <label for="">Application name <span>*</span></label>
+      <input type="text" placeholder="eg: authApp" autofocus>
+      <h5>Something users will recognize and trust.</h5>
+
+      <label for="">Homepage URL <span>*</span></label>
+      <input type="text" placeholder="eg: http://example.com">
+      <h5>The full URL to your application homepage.</h5>
+
+      <label for="">Application description <span>*</span></label>
+      <input type="text" placeholder="eg: This is a nice app">
+      <h5>This is displayed to all users of your application.</h5>
+
+      <label for="">Callback URL <span>*</span></label>
+      <input type="text" placeholder="eg: /sample/path/">
+      <h5>Your application’s callback URL.</h5>
+
+      <button>Register application</button>
+    </div>
+  </body>
+
+</html>
