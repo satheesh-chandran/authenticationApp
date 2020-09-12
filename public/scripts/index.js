@@ -4,7 +4,7 @@ const sendCreateAppRequest = function (body) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body)
   };
-  fetch('/createApp', options).then(console.log);
+  return fetch('/createApp', options).then(res => res.json());
 };
 
 const showFieldError = function () {
@@ -23,10 +23,21 @@ const getTexts = function () {
   }, {});
 };
 
-const submitAppDetails = function () {
+const getElement = prop => document.querySelector(prop);
+
+const showRegisterInformation = ({ clientId, clientSecret }, appName) => {
+  getElement('#appName').innerText = appName;
+  getElement('#clientId').innerText = clientId;
+  getElement('#clientSecret').innerText = clientSecret;
+  getElement('#appInfo').classList.remove('invisible');
+  getElement('#container').classList.add('invisible');
+};
+
+const submitAppDetails = async function () {
   const texts = getTexts();
   if (!Object.values(texts).every(text => text)) {
     return showFieldError();
   }
-  sendCreateAppRequest(texts);
+  const response = await sendCreateAppRequest(texts);
+  showRegisterInformation(response, texts.name);
 };
