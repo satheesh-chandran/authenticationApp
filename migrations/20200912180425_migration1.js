@@ -19,7 +19,7 @@ exports.up = function (knex) {
       table.string('name', 30).notNullable();
       table.string('homePage', 30).notNullable();
       table.string('description', 30).notNullable();
-      table.string('redirectUrl', 30).notNullable();
+      table.string('callbackUrl', 30).notNullable();
     });
   });
 };

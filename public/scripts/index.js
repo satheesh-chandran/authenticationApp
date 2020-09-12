@@ -14,7 +14,7 @@ const showFieldError = function () {
 };
 
 const getTexts = function () {
-  const properties = ['appName', 'homePage', 'description', 'callbackUrl'];
+  const properties = ['name', 'homePage', 'description', 'callbackUrl'];
   return properties.reduce((context, prop) => {
     const textElement = document.querySelector(`#${prop}`);
     context[prop] = textElement.value.trim();

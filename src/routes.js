@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.post('/createApp', [
-  checkFields('appName', 'homePage', 'description', 'callbackUrl'),
+  checkFields('name', 'homePage', 'description', 'callbackUrl'),
   createApp
 ]);
 
