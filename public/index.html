@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication</title>
     <link rel="stylesheet" href="./styles/index.css">
+    <script src="./scripts/index.js"></script>
   </head>
 
   <body>
@@ -14,22 +15,22 @@
     <div id="container">
       <p class="invisible">Fields shouldn't be empty</p>
       <label for="">Application name <span>*</span></label>
-      <input type="text" placeholder="eg: authApp" autofocus>
+      <input type="text" id="appName" placeholder="eg: authApp" autofocus>
       <h5>Something users will recognize and trust.</h5>
 
       <label for="">Homepage URL <span>*</span></label>
-      <input type="text" placeholder="eg: http://example.com">
+      <input type="text" id="homePage" placeholder="eg: http://example.com">
       <h5>The full URL to your application homepage.</h5>
 
       <label for="">Application description <span>*</span></label>
-      <input type="text" placeholder="eg: This is a nice app">
+      <input type="text" id="description" placeholder="eg: This is a nice app">
       <h5>This is displayed to all users of your application.</h5>
 
       <label for="">Callback URL <span>*</span></label>
-      <input type="text" placeholder="eg: /sample/path/">
+      <input type="text" id="callbackUrl" placeholder="eg: /sample/path/">
       <h5>Your application’s callback URL.</h5>
 
-      <button>Register application</button>
+      <button onclick="submitAppDetails()">Register application</button>
     </div>
   </body>
 

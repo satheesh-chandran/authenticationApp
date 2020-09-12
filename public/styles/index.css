@@ -7,6 +7,7 @@ h5 {
   margin: 0;
   opacity: 0.6;
   font-weight: 100;
+  font-style: italic;
 }
 
 span {
@@ -42,6 +43,10 @@ input:focus {
   box-shadow: 0px 0px 10px 0px powderblue;
 }
 
+input::placeholder {
+  font-style: italic;
+}
+
 button {
   width: 30%;
   height: 25px;
@@ -50,6 +55,7 @@ button {
   border-radius: 3px;
   border: 1px solid #2ea44f;
   background-color: #2ea44f;
+  outline: none;
 }
 
 button:hover {
