@@ -1,11 +1,13 @@
 exports.up = function (knex) {
   return knex.transaction(async function (trx) {
-    await trx.schema.dropTableIfExists('persons');
+    await trx.schema.dropTableIfExists('users');
     await trx.schema.dropTableIfExists('applications');
 
-    await trx.schema.createTable('persons', function (table) {
+    await trx.schema.createTable('users', function (table) {
       table.integer('id').notNullable();
       table.string('name', 30).notNullable();
+      table.string('username', 30).notNullable();
+      table.string('password', 30).notNullable();
       table.integer('age').notNullable();
       table.string('houseName', 30).notNullable();
       table.string('district', 30);
@@ -26,7 +28,7 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.transaction(async function (trx) {
-    await trx.schema.dropTableIfExists('persons');
+    await trx.schema.dropTableIfExists('users');
     await trx.schema.dropTableIfExists('applications');
   });
 };

@@ -1,3 +1,4 @@
 node_modules/
 .env
 data/auth.db
+plan.txt
