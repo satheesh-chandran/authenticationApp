@@ -4,6 +4,10 @@ const querystring = require('querystring');
 const dataStore = require('../library/knexdataStore');
 
 const { createClientIds } = require('./idCreators');
+const { CodeManager, TokenManager } = require('./codeManager');
+
+const codeManager = new CodeManager();
+const tokenManager = new TokenManager();
 
 const checkFields = function (...fields) {
   return function (req, res, next) {
@@ -48,9 +52,42 @@ const validateSignin = async function (req, res, next) {
   next();
 };
 
-const signinToApp = async function (req, res) {
+const signinToApp = function (req, res) {
   const { appDetails, userDetails } = req;
-  res.json({});
+  const { clientId, clientSecret, homePage, callbackUrl } = appDetails;
+  const { username, password } = userDetails;
+  const entries = { username, password, clientId, clientSecret };
+  const code = codeManager.addCode(entries);
+  const route = `${homePage}${callbackUrl}?code=${code}`;
+  res.json({ url: route });
+};
+
+const isTokenDetailsValid = (clientId, clientSecret, details) =>
+  details &&
+  details.clientId === clientId &&
+  details.clientSecret === clientSecret;
+
+const getAccessToken = async function (req, res) {
+  const { code, clientId, clientSecret } = req.body;
+  const codeDetails = codeManager.getCodeDetails(code);
+  if (!isTokenDetailsValid(clientId, clientSecret, codeDetails)) {
+    return res.status(405).send('You are not authorized to get Access token');
+  }
+  const { username, password } = codeDetails;
+  const [userDetails] = await dataStore.getUserDetails({ username, password });
+  res.json({ accessToken: tokenManager.addToken(userDetails) });
+};
+
+const getUserInfo = function (req, res) {
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(405).send('You are not authorized to get user details');
+  }
+  const userDetails = tokenManager.getUserDetails(token);
+  if (!userDetails) {
+    return res.status(405).send('You are not authorized to get user details');
+  }
+  res.json(userDetails);
 };
 
 module.exports = {
@@ -58,5 +95,7 @@ module.exports = {
   createApp,
   getLoginPage,
   validateSignin,
-  signinToApp
+  signinToApp,
+  getAccessToken,
+  getUserInfo
 };

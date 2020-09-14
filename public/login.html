@@ -98,9 +98,12 @@
         const options = {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
+          mode: 'cors'
         };
-        return fetch('/signinToApp', options).then(res => res.json());
+        return fetch('/signinToApp', options)
+          .then(res => res.json())
+          .then(({ url }) => (document.location = url));
       };
 
       const getTexts = function () {
