@@ -4,6 +4,7 @@ const {
   checkFields,
   createApp,
   getLoginPage,
+  validateSignin,
   signinToApp
 } = require('./handlers');
 const app = express();
@@ -19,6 +20,10 @@ app.post('/createApp', [
 
 app.get('/login/oauth/authorize', getLoginPage);
 
-app.post('/signinToApp', signinToApp);
+app.post('/signinToApp', [
+  checkFields('username', 'password'),
+  validateSignin,
+  signinToApp
+]);
 
 module.exports = { app };

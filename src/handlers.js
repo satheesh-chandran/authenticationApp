@@ -1,7 +1,7 @@
-const path = require('path');
 const url = require('url');
-const dataStore = require('../library/knexdataStore');
+const path = require('path');
 const querystring = require('querystring');
+const dataStore = require('../library/knexdataStore');
 
 const { createClientIds } = require('./idCreators');
 
@@ -31,11 +31,32 @@ const getLoginPage = async function (req, res) {
   res.sendFile(path.resolve(`${__dirname}/../public/login.html`));
 };
 
-const signinToApp = function (req, res) {
+const validateSignin = async function (req, res, next) {
   const parsed = querystring.parse(url.parse(req.headers.referer).query);
   const { clientId, callbackUrl } = parsed;
   const { username, password } = req.body;
+  const [appDetails] = await dataStore.getAppDetails({ clientId, callbackUrl });
+  if (!appDetails) {
+    return res.status(404).send('App not found');
+  }
+  const [userDetails] = await dataStore.getUserDetails({ username, password });
+  if (!userDetails) {
+    return res.status(404).send('User name and password did not match');
+  }
+  req.appDetails = appDetails;
+  req.userDetails = userDetails;
+  next();
+};
+
+const signinToApp = async function (req, res) {
+  const { appDetails, userDetails } = req;
   res.json({});
 };
 
-module.exports = { checkFields, createApp, getLoginPage, signinToApp };
+module.exports = {
+  checkFields,
+  createApp,
+  getLoginPage,
+  validateSignin,
+  signinToApp
+};

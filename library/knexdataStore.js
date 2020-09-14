@@ -5,7 +5,7 @@ const applications = knex('applications').select();
 
 const addApplication = appDetails => applications.clone().insert(appDetails);
 
-const getUserDetails = id => users.clone().where({ id });
+const getUserDetails = entries => users.clone().where(entries);
 
 const getAppDetails = entries => applications.clone().where(entries);
 
