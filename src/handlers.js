@@ -3,7 +3,7 @@ const path = require('path');
 const querystring = require('querystring');
 const dataStore = require('../library/knexdataStore');
 
-const { createClientIds } = require('./idCreators');
+const { getHashIds } = require('./idCreators');
 const { CodeManager, TokenManager } = require('./codeManager');
 
 const codeManager = new CodeManager();
@@ -19,8 +19,8 @@ const checkFields = function (...fields) {
 };
 
 const createApp = async function (req, res) {
-  const clientId = createClientIds();
-  const clientSecret = createClientIds();
+  const clientId = getHashIds();
+  const clientSecret = getHashIds();
   const entries = { ...req.body, clientSecret, clientId };
   try {
     await dataStore.addApplication(entries);

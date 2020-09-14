@@ -1,4 +1,4 @@
-const { createClientIds } = require('./idCreators');
+const { getHashIds } = require('./idCreators');
 
 class CodeManager {
   constructor() {
@@ -10,7 +10,7 @@ class CodeManager {
   }
 
   addCode(entries) {
-    const code = createClientIds();
+    const code = getHashIds();
     this.codeCredentials[code] = entries;
     setTimeout(() => this.deleteCode(code), 3000);
     return code;
@@ -27,7 +27,7 @@ class TokenManager {
   }
 
   addToken(entries) {
-    const token = createClientIds();
+    const token = getHashIds();
     this.tokenCredentials[token] = entries;
     return token;
   }

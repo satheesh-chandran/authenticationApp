@@ -5,9 +5,9 @@ const idCreator = (() => {
   return () => id++;
 })();
 
-const createClientIds = function () {
+const getHashIds = function () {
   const hash = crypto.createHash('sha1').update(`${+new Date() * idCreator()}`);
   return hash.digest('hex');
 };
 
-module.exports = { createClientIds };
+module.exports = { getHashIds };
