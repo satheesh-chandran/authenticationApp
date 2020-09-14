@@ -20,7 +20,7 @@ const getHashIds = () =>
     return hash.digest('hex');
   });
 
-const addCodeHash = function (entries, time) {
+const setItem = function (entries, time) {
   return new Promise((resolve, reject) => {
     getHashIds().then(hash => {
       client.set(hash, JSON.stringify(entries), 'EX', time, (err, res) => {
@@ -44,4 +44,4 @@ const getItem = function (code) {
   });
 };
 
-module.exports = { getCurrentId, getHashIds, addCodeHash, getItem };
+module.exports = { getCurrentId, getHashIds, setItem, getItem };
