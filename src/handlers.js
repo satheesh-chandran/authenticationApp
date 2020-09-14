@@ -3,11 +3,7 @@ const path = require('path');
 const querystring = require('querystring');
 const dataStore = require('../library/knexdataStore');
 
-const { getHashIds } = require('./idCreators');
-const { CodeManager, TokenManager } = require('./codeManager');
-
-const codeManager = new CodeManager();
-const tokenManager = new TokenManager();
+const redisDatabase = require('./redisDatabase');
 
 const checkFields = function (...fields) {
   return function (req, res, next) {
@@ -19,8 +15,8 @@ const checkFields = function (...fields) {
 };
 
 const createApp = async function (req, res) {
-  const clientId = getHashIds();
-  const clientSecret = getHashIds();
+  const clientId = await redisDatabase.getHashIds();
+  const clientSecret = await redisDatabase.getHashIds();
   const entries = { ...req.body, clientSecret, clientId };
   try {
     await dataStore.addApplication(entries);
@@ -52,12 +48,12 @@ const validateSignin = async function (req, res, next) {
   next();
 };
 
-const signinToApp = function (req, res) {
+const signinToApp = async function (req, res) {
   const { appDetails, userDetails } = req;
   const { clientId, clientSecret, homePage, callbackUrl } = appDetails;
   const { username, password } = userDetails;
   const entries = { username, password, clientId, clientSecret };
-  const code = codeManager.addCode(entries);
+  const code = await redisDatabase.setItem(entries, 600);
   const route = `${homePage}${callbackUrl}?code=${code}`;
   res.json({ url: route });
 };
@@ -69,21 +65,21 @@ const isTokenDetailsValid = (clientId, clientSecret, details) =>
 
 const getAccessToken = async function (req, res) {
   const { code, clientId, clientSecret } = req.body;
-  const codeDetails = codeManager.getCodeDetails(code);
+  const codeDetails = await redisDatabase.getItem(code);
   if (!isTokenDetailsValid(clientId, clientSecret, codeDetails)) {
     return res.status(405).send('You are not authorized to get Access token');
   }
   const { username, password } = codeDetails;
   const [userDetails] = await dataStore.getUserDetails({ username, password });
-  res.json({ accessToken: tokenManager.addToken(userDetails) });
+  res.json({ accessToken: await redisDatabase.setItem(userDetails, 60 * 60) });
 };
 
-const getUserInfo = function (req, res) {
+const getUserInfo = async function (req, res) {
   const token = req.headers.authorization;
   if (!token) {
     return res.status(405).send('You are not authorized to get user details');
   }
-  const userDetails = tokenManager.getUserDetails(token);
+  const userDetails = await redisDatabase.getItem(token);
   if (!userDetails) {
     return res.status(405).send('You are not authorized to get user details');
   }
