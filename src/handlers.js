@@ -1,4 +1,7 @@
+const path = require('path');
+const url = require('url');
 const dataStore = require('../library/knexdataStore');
+const querystring = require('querystring');
 
 const { createClientIds } = require('./idCreators');
 
@@ -11,17 +14,28 @@ const checkFields = function (...fields) {
   };
 };
 
-const createApp = function (req, res) {
+const createApp = async function (req, res) {
   const clientId = createClientIds();
   const clientSecret = createClientIds();
   const entries = { ...req.body, clientSecret, clientId };
   try {
-    dataStore.addApplication(entries).then(() => {
-      res.json({ clientId, clientSecret });
-    });
+    await dataStore.addApplication(entries);
+    res.json({ clientId, clientSecret });
   } catch (error) {
     res.status(400).send('Bad Request');
   }
 };
 
-module.exports = { checkFields, createApp };
+const getLoginPage = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.sendFile(path.resolve(`${__dirname}/../public/login.html`));
+};
+
+const signinToApp = function (req, res) {
+  const parsed = querystring.parse(url.parse(req.headers.referer).query);
+  const { clientId, callbackUrl } = parsed;
+  const { username, password } = req.body;
+  res.json({});
+};
+
+module.exports = { checkFields, createApp, getLoginPage, signinToApp };

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+      }
+
+      #container {
+        height: 400px;
+        width: 30%;
+        margin: 0 auto;
+        box-shadow: 0px 0px 5px 0px rgb(174, 174, 174);
+      }
+
+
+      h5 {
+        margin: 0;
+        opacity: 0.6;
+        font-weight: 100;
+        font-style: italic;
+      }
+
+      span {
+        color: red;
+      }
+
+      #container {
+        height: 300px;
+        width: 30%;
+        margin: 0 auto;
+        box-shadow: 0px 0px 5px 0px rgb(174, 174, 174);
+        padding-left: 2%;
+        padding-right: 2%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        border-radius: 3px;
+        text-align: start;
+      }
+
+      input {
+        width: 95%;
+        height: 25px;
+        outline: none;
+        font-size: medium;
+        border-radius: 3px;
+        border: 1px solid gray;
+      }
+
+      input:focus {
+        border: 2px solid powderblue;
+        box-shadow: 0px 0px 10px 0px powderblue;
+      }
+
+      input::placeholder {
+        font-style: italic;
+      }
+
+      button {
+        width: 30%;
+        height: 25px;
+        color: white;
+        cursor: pointer;
+        border-radius: 3px;
+        border: 1px solid #2ea44f;
+        background-color: #2ea44f;
+        outline: none;
+      }
+
+      button:hover {
+        color: #2ea44f;
+        background-color: white;
+      }
+
+      #container>p {
+        margin: 0;
+        align-self: center;
+        color: red;
+      }
+
+      .invisible {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .hide {
+        display: none;
+      }
+    </style>
+    <script>
+      const sendAccountDetails = function (body) {
+        const options = {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body)
+        };
+        return fetch('/signinToApp', options).then(res => res.json());
+      };
+
+      const getTexts = function () {
+        const properties = ['username', 'password']
+        return properties.reduce((context, prop) => {
+          const textElement = document.querySelector(`#${prop}`);
+          context[prop] = textElement.value.trim();
+          textElement.value = '';
+          return context;
+        }, {});
+      };
+
+      const showFieldError = function () {
+        const errorElement = document.querySelector('#container p');
+        errorElement.classList.remove('invisible');
+        setTimeout(() => errorElement.classList.add('invisible'), 1500);
+      };
+
+      const submitAccountDetails = async function () {
+        const texts = getTexts();
+        if (!Object.values(texts).every(text => text)) {
+          return showFieldError();
+        }
+        const response = await sendAccountDetails(texts);
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>Login To Your Account</h1>
+    <div id="container">
+      <p class="invisible">Fields shouldn't be empty</p>
+      <label for="">Username <span>*</span></label>
+      <input type="text" id="username" placeholder="eg: John" autofocus>
+      <h5>Username that you registered with this app.</h5>
+
+      <label for="">Password <span>*</span></label>
+      <input type="text" id="password" placeholder="eg: john1234">
+      <h5>Password of your account.</h5>
+
+      <button onclick="submitAccountDetails()">Authorize</button>
+    </div>
+  </body>
+
+</html>

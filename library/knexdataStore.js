@@ -5,6 +5,8 @@ const applications = knex('applications').select();
 
 const addApplication = appDetails => applications.clone().insert(appDetails);
 
-const getPersonDetails = id => users.clone().where({ id });
+const getUserDetails = id => users.clone().where({ id });
 
-module.exports = { addApplication, getPersonDetails };
+const getAppDetails = entries => applications.clone().where(entries);
+
+module.exports = { addApplication, getUserDetails, getAppDetails };
