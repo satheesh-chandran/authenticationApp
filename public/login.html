@@ -101,7 +101,7 @@
           body: JSON.stringify(body),
           mode: 'cors'
         };
-        return fetch('/signinToApp', options)
+        return fetch('/authorizeToApp', options)
           .then(res => res.json())
           .then(({ url }) => (document.location = url));
       };

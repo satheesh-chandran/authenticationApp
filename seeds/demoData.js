@@ -2,44 +2,32 @@ exports.seed = function (knex) {
   return knex.transaction(async function (trx) {
     await trx('users').insert([
       {
-        id: 0,
-        name: 'Satheesh',
+        name: 'satheesh',
         username: 'satheesh',
         password: 'satheesh@123',
-        age: 21,
-        houseName: 'Panampilly House',
-        district: 'Thrissur',
-        state: 'Kerala'
+        company: 'thoughtworks',
+        email: 'satheesh@thoughtworks.com'
       },
       {
-        id: 1,
-        name: 'Anil',
+        name: 'anil',
         username: 'anil',
         password: 'anil@123',
-        age: 22,
-        houseName: 'Erippikkal',
-        district: 'Palakkad',
-        state: 'Kerala'
+        company: 'thoughtworks',
+        email: 'anil@thoughtworks.com'
       },
       {
-        id: 2,
-        name: 'Thanya',
-        age: 23,
-        username: 'thanya',
-        password: 'thanya@123',
-        houseName: 'Cherumanalil',
-        district: 'Kannur',
-        state: 'Kerala'
-      },
-      {
-        id: 3,
-        name: 'Sruthy',
+        name: 'sruthy',
         username: 'sruthy',
         password: 'sruthy@123',
-        age: 24,
-        houseName: 'Kalarikkal',
-        district: 'Coimbatore',
-        state: 'Tamilnadu'
+        company: 'thoughtworks',
+        email: 'sruthy@thoughtworks.com'
+      },
+      {
+        name: 'thanya',
+        username: 'thanya',
+        password: 'thanya@123',
+        company: 'thoughtworks',
+        email: 'thanya@thoughtworks.com'
       }
     ]);
   });

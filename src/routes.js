@@ -5,9 +5,11 @@ const {
   createApp,
   getLoginPage,
   validateSignin,
-  signinToApp,
+  authorize,
   getAccessToken,
-  getUserInfo
+  getUserInfo,
+  signin,
+  login
 } = require('./handlers');
 const app = express();
 
@@ -22,16 +24,23 @@ app.post('/createApp', [
 
 app.get('/login/oauth/authorize', getLoginPage);
 
-app.post('/signinToApp', [
+app.post('/authorizeToApp', [
   checkFields('username', 'password'),
   validateSignin,
-  signinToApp
+  authorize
 ]);
 
 app.post('/login/oauth/access_token', [
   checkFields('code', 'clientSecret', 'clientId'),
   getAccessToken
 ]);
+
+app.post('/api/signinToApp', [
+  checkFields('name', 'username', 'password', 'email', 'company'),
+  signin
+]);
+
+app.post('/api/loginToApp', [checkFields('username', 'password'), login]);
 
 app.get('/users', getUserInfo);
 

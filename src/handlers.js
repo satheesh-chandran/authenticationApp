@@ -48,7 +48,7 @@ const validateSignin = async function (req, res, next) {
   next();
 };
 
-const signinToApp = async function (req, res) {
+const authorize = async function (req, res) {
   const { appDetails, userDetails } = req;
   const { clientId, clientSecret, homePage, callbackUrl } = appDetails;
   const { username, password } = userDetails;
@@ -86,12 +86,26 @@ const getUserInfo = async function (req, res) {
   res.json(userDetails);
 };
 
+const signin = function (req, res) {
+  const { name, username, password, email, company } = req.body;
+  console.log(req.body);
+  res.json({ status: true });
+};
+
+const login = function (req, res) {
+  const { username, password } = req.body;
+  console.log(req.body);
+  res.json({ status: true });
+};
+
 module.exports = {
   checkFields,
   createApp,
   getLoginPage,
   validateSignin,
-  signinToApp,
+  authorize,
   getAccessToken,
-  getUserInfo
+  getUserInfo,
+  signin,
+  login
 };
