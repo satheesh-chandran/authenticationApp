@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const {
   checkFields,
@@ -9,13 +10,15 @@ const {
   getAccessToken,
   getUserInfo,
   signin,
-  login
+  login,
+  isLoggedIn
 } = require('./handlers');
 const app = express();
 
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.static('public'));
+app.use(cookieParser());
 
 app.post('/createApp', [
   checkFields('name', 'homePage', 'description', 'callbackUrl'),
@@ -43,5 +46,7 @@ app.post('/api/signinToApp', [
 app.post('/api/loginToApp', [checkFields('username', 'password'), login]);
 
 app.get('/users', getUserInfo);
+
+app.get('/isLoggedIn', isLoggedIn);
 
 module.exports = { app };

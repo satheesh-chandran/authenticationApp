@@ -86,16 +86,36 @@ const getUserInfo = async function (req, res) {
   res.json(userDetails);
 };
 
-const signin = function (req, res) {
-  const { name, username, password, email, company } = req.body;
-  console.log(req.body);
-  res.json({ status: true });
+const signin = async function (req, res) {
+  try {
+    await dataStore.addUsers(req.body);
+    res.json({ status: true });
+  } catch (error) {
+    res.json({ status: false });
+  }
 };
 
-const login = function (req, res) {
+const login = async function (req, res) {
   const { username, password } = req.body;
-  console.log(req.body);
-  res.json({ status: true });
+  const [userDetails] = await dataStore.getUserDetails({ username, password });
+  if (userDetails) {
+    res.cookie('userId', userDetails.id);
+    return res.json({ status: true });
+  }
+  return res.json({ status: false });
+};
+
+const isLoggedIn = async function (req, res) {
+  const { userId } = req.cookies;
+  try {
+    const [userDetails] = await dataStore.getUserDetails({ id: userId });
+    if (userDetails) {
+      return res.json({ loggedIn: true });
+    }
+    return res.json({ loggedIn: false });
+  } catch (error) {
+    return res.json({ loggedIn: false });
+  }
 };
 
 module.exports = {
@@ -107,5 +127,6 @@ module.exports = {
   getAccessToken,
   getUserInfo,
   signin,
-  login
+  login,
+  isLoggedIn
 };

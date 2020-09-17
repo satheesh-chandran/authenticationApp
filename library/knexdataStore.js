@@ -9,4 +9,6 @@ const getUserDetails = entries => users.clone().where(entries);
 
 const getAppDetails = entries => applications.clone().where(entries);
 
-module.exports = { addApplication, getUserDetails, getAppDetails };
+const addUsers = entries => users.clone().insert(entries);
+
+module.exports = { addApplication, getUserDetails, getAppDetails, addUsers };
