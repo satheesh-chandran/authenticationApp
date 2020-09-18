@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const {
+  getMyApps,
   getAppDetails,
   checkLoginStatus,
   checkFields,
@@ -56,5 +57,7 @@ app.post('/api/getAppDetails', [
   checkLoginStatus,
   getAppDetails
 ]);
+
+app.get('/api/getMyApps', [checkLoginStatus, getMyApps]);
 
 module.exports = { app };

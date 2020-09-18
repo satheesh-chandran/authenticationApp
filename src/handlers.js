@@ -145,8 +145,19 @@ const checkLoginStatus = async function (req, res, next) {
   }
 };
 
+const getMyApps = async function (req, res) {
+  const entries = { ownerId: req.cookies.userId };
+  try {
+    const details = await dataStore.getAppDetails(entries);
+    return res.json({ protected: false, details });
+  } catch (error) {
+    res.status(405).json({ protected: true });
+  }
+};
+
 module.exports = {
   getAppDetails,
+  getMyApps,
   checkFields,
   createApp,
   getLoginPage,
