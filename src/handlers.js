@@ -17,10 +17,11 @@ const checkFields = function (...fields) {
 const createApp = async function (req, res) {
   const clientId = await redisDatabase.getHashIds();
   const clientSecret = await redisDatabase.getHashIds();
-  const entries = { ...req.body, clientSecret, clientId };
+  const ownerId = req.cookies.userId;
+  const entries = { ...req.body, clientSecret, clientId, ownerId };
   try {
-    await dataStore.addApplication(entries);
-    res.json({ clientId, clientSecret });
+    const [appId] = await dataStore.addApplication(entries);
+    res.json({ appId });
   } catch (error) {
     res.status(400).send('Bad Request');
   }
@@ -118,7 +119,34 @@ const isLoggedIn = async function (req, res) {
   }
 };
 
+const getAppDetails = async function (req, res) {
+  const entries = { id: req.body.id, ownerId: req.cookies.userId };
+  try {
+    const [details] = await dataStore.getAppDetails(entries);
+    if (details) {
+      return res.json({ protected: false, details });
+    }
+    return res.json({ protected: true }).status(405);
+  } catch (error) {
+    res.status(405).json({ protected: true });
+  }
+};
+
+const checkLoginStatus = async function (req, res, next) {
+  const { userId } = req.cookies;
+  try {
+    const [userDetails] = await dataStore.getUserDetails({ id: userId });
+    if (userDetails) {
+      return next();
+    }
+    return res.json({ protected: true }).status(405);
+  } catch (error) {
+    return res.json({ protected: true }).status(405);
+  }
+};
+
 module.exports = {
+  getAppDetails,
   checkFields,
   createApp,
   getLoginPage,
@@ -128,5 +156,6 @@ module.exports = {
   getUserInfo,
   signin,
   login,
-  isLoggedIn
+  isLoggedIn,
+  checkLoginStatus
 };

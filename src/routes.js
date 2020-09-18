@@ -2,6 +2,8 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const {
+  getAppDetails,
+  checkLoginStatus,
   checkFields,
   createApp,
   getLoginPage,
@@ -20,7 +22,7 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(cookieParser());
 
-app.post('/createApp', [
+app.post('/api/createApp', [
   checkFields('name', 'homePage', 'description', 'callbackUrl'),
   createApp
 ]);
@@ -48,5 +50,11 @@ app.post('/api/loginToApp', [checkFields('username', 'password'), login]);
 app.get('/users', getUserInfo);
 
 app.get('/isLoggedIn', isLoggedIn);
+
+app.post('/api/getAppDetails', [
+  checkFields('id'),
+  checkLoginStatus,
+  getAppDetails
+]);
 
 module.exports = { app };
