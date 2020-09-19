@@ -14,7 +14,10 @@ const addUsers = entries => users.clone().insert(entries);
 
 const addStory = entries => stories.clone().insert(entries);
 
+const getStoryDetails = entries => stories.clone().where(entries);
+
 module.exports = {
+  getStoryDetails,
   addApplication,
   getUserDetails,
   getAppDetails,
