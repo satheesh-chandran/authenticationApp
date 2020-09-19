@@ -162,12 +162,21 @@ const addStory = async function (req, res) {
 };
 
 const getStoryDetails = async function (req, res) {
-  const [story] = await dataStore.getStoryDetails({ id: req.body.id });
+  const [story] = await dataStore.getStories({ id: req.body.id });
   res.json(story);
+};
+
+const getAllStories = async function (req, res) {
+  res.json(await dataStore.getAllStories());
+};
+
+const getYourStories = async function (req, res) {
+  res.json(await dataStore.getYourStories({ ownerId: req.cookies.userId }));
 };
 
 module.exports = {
   getAppDetails,
+  getYourStories,
   getMyApps,
   checkFields,
   createApp,
@@ -181,5 +190,6 @@ module.exports = {
   isLoggedIn,
   checkLoginStatus,
   addStory,
-  getStoryDetails
+  getStoryDetails,
+  getAllStories
 };

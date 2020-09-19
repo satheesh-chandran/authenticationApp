@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const {
   getMyApps,
+  getYourStories,
   getAppDetails,
   checkLoginStatus,
   checkFields,
@@ -16,7 +17,8 @@ const {
   signin,
   login,
   isLoggedIn,
-  getStoryDetails
+  getStoryDetails,
+  getAllStories
 } = require('./handlers');
 const app = express();
 
@@ -73,5 +75,9 @@ app.post('/api/getStory', [
   checkFields('id'),
   getStoryDetails
 ]);
+
+app.get('/api/allStories', [checkLoginStatus, getAllStories]);
+
+app.get('/api/yourStories', [checkLoginStatus, getYourStories]);
 
 module.exports = { app };
