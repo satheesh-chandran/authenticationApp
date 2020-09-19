@@ -12,9 +12,11 @@ const {
   authorize,
   getAccessToken,
   getUserInfo,
+  addStory,
   signin,
   login,
-  isLoggedIn
+  isLoggedIn,
+  getStoryDetails
 } = require('./handlers');
 const app = express();
 
@@ -59,5 +61,17 @@ app.post('/api/getAppDetails', [
 ]);
 
 app.get('/api/getMyApps', [checkLoginStatus, getMyApps]);
+
+app.post('/api/addStory', [
+  checkLoginStatus,
+  checkFields('title', 'body'),
+  addStory
+]);
+
+app.post('/api/getStory', [
+  checkLoginStatus,
+  checkFields('id'),
+  getStoryDetails
+]);
 
 module.exports = { app };

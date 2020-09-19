@@ -148,11 +148,22 @@ const checkLoginStatus = async function (req, res, next) {
 const getMyApps = async function (req, res) {
   const entries = { ownerId: req.cookies.userId };
   try {
-    const details = await dataStore.getAppDetails(entries);
-    return res.json({ protected: false, details });
+    const apps = await dataStore.getAppDetails(entries);
+    return res.json({ protected: false, apps });
   } catch (error) {
     res.status(405).json({ protected: true });
   }
+};
+
+const addStory = async function (req, res) {
+  const ownerId = req.cookies.userId;
+  const [storyId] = await dataStore.addStory({ ...req.body, ownerId });
+  res.json({ storyId });
+};
+
+const getStoryDetails = async function (req, res) {
+  const [story] = await dataStore.getStoryDetails({ id: req.body.id });
+  res.json(story);
 };
 
 module.exports = {
@@ -168,5 +179,7 @@ module.exports = {
   signin,
   login,
   isLoggedIn,
-  checkLoginStatus
+  checkLoginStatus,
+  addStory,
+  getStoryDetails
 };
