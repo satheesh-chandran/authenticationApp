@@ -182,8 +182,13 @@ const addResponse = async function (req, res) {
   res.json({ status: true });
 };
 
+const logout = function (req, res) {
+  res.clearCookie('userId').json({ status: true });
+};
+
 module.exports = {
   getAppDetails,
+  logout,
   addResponse,
   getYourStories,
   getMyApps,
