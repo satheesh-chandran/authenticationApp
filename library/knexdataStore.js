@@ -3,9 +3,16 @@ const knex = require('./knex');
 const users = knex('users').select();
 const applications = knex('applications').select();
 const stories = knex('stories').select();
+const responses = knex('responses').select();
 const allStories = stories
   .clone()
-  .leftJoin(users.clone().as('users'), 'ownerId', 'users.id');
+  .leftJoin(users.clone().as('users'), 'stories.ownerId', 'users.id');
+
+const allResponses = responses
+  .clone()
+  .select('responses.*', 'username')
+  .leftJoin(users.clone().as('users'), 'responses.ownerId', 'users.id')
+  .as('allResponses');
 
 const storyFormat = [
   'stories.id as id',
@@ -18,6 +25,8 @@ const storyFormat = [
 ];
 
 const addApplication = appDetails => applications.clone().insert(appDetails);
+
+const insertResponse = response => responses.clone().insert(response);
 
 const getUserDetails = entries => users.clone().where(entries);
 
@@ -32,14 +41,28 @@ const getAllStories = () => allStories.clone().select(storyFormat);
 const getYourStories = entries =>
   allStories.clone().select(storyFormat).where(entries);
 
-const getStoryDetails = entries =>
-  allStories.clone().select(storyFormat).where(entries);
-
 const getStories = entries =>
   allStories.clone().select(storyFormat).where(entries);
 
+const includeResponse = (story, storyId) =>
+  allResponses
+    .clone()
+    .where({ storyId })
+    .then(responses => {
+      story.responses = responses;
+      return story;
+    });
+
+const getStoryDetails = storyId =>
+  allStories
+    .clone()
+    .select(storyFormat)
+    .where({ ['stories.id']: storyId })
+    .then(([story]) => includeResponse(story, storyId));
+
 module.exports = {
   getStoryDetails,
+  insertResponse,
   getStories,
   addApplication,
   getUserDetails,

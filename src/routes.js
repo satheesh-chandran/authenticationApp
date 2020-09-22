@@ -18,7 +18,8 @@ const {
   login,
   isLoggedIn,
   getStoryDetails,
-  getAllStories
+  getAllStories,
+  addResponse
 } = require('./handlers');
 const app = express();
 
@@ -79,5 +80,11 @@ app.post('/api/getStory', [
 app.get('/api/allStories', [checkLoginStatus, getAllStories]);
 
 app.get('/api/yourStories', [checkLoginStatus, getYourStories]);
+
+app.post('/api/addResponse', [
+  checkLoginStatus,
+  checkFields('storyId', 'message'),
+  addResponse
+]);
 
 module.exports = { app };

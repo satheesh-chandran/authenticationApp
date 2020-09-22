@@ -162,20 +162,29 @@ const addStory = async function (req, res) {
 };
 
 const getStoryDetails = async function (req, res) {
-  const [story] = await dataStore.getStories({ id: req.body.id });
-  res.json(story);
+  const storyDetails = await dataStore.getStoryDetails(req.body.id);
+  res.json(storyDetails);
 };
 
 const getAllStories = async function (req, res) {
-  res.json(await dataStore.getAllStories());
+  const stories = await dataStore.getAllStories();
+  res.json(stories);
 };
 
 const getYourStories = async function (req, res) {
   res.json(await dataStore.getYourStories({ ownerId: req.cookies.userId }));
 };
 
+const addResponse = async function (req, res) {
+  const ownerId = req.cookies.userId;
+  const { storyId, message } = req.body;
+  await dataStore.insertResponse({ storyId, ownerId, message });
+  res.json({ status: true });
+};
+
 module.exports = {
   getAppDetails,
+  addResponse,
   getYourStories,
   getMyApps,
   checkFields,
