@@ -60,15 +60,23 @@ const getStoryDetails = storyId =>
     .where({ ['stories.id']: storyId })
     .then(([story]) => includeResponse(story, storyId));
 
+const deleteResponse = (id, ownerId) =>
+  responses.clone().del().where({ id, ownerId });
+
+const deleteStory = (id, ownerId) =>
+  stories.clone().del().where({ id, ownerId });
+
 module.exports = {
-  getStoryDetails,
-  insertResponse,
+  addStory,
+  addUsers,
   getStories,
+  deleteStory,
+  getAllStories,
+  getAppDetails,
+  deleteResponse,
+  insertResponse,
   addApplication,
   getUserDetails,
-  getAppDetails,
-  addUsers,
-  addStory,
-  getAllStories,
-  getYourStories
+  getYourStories,
+  getStoryDetails,
 };

@@ -162,8 +162,12 @@ const addStory = async function (req, res) {
 };
 
 const getStoryDetails = async function (req, res) {
-  const storyDetails = await dataStore.getStoryDetails(req.body.id);
-  res.json(storyDetails);
+  try {
+    const storyDetails = await dataStore.getStoryDetails(req.body.id);
+    res.json(storyDetails);
+  } catch (error) {
+    res.status(404).json({ status: 'Item not found' });
+  }
 };
 
 const getAllStories = async function (req, res) {
@@ -186,24 +190,48 @@ const logout = function (req, res) {
   res.clearCookie('userId').json({ status: true });
 };
 
+const deleteResponse = async function (req, res) {
+  const { id } = req.body;
+  const { userId } = req.cookies;
+  try {
+    await dataStore.deleteResponse(id, userId);
+    res.json({ status: true });
+  } catch (error) {
+    res.json({ status: false });
+  }
+};
+
+const deleteStory = async function (req, res) {
+  const { id } = req.body;
+  const { userId } = req.cookies;
+  try {
+    await dataStore.deleteStory(id, userId);
+    res.json({ status: true });
+  } catch (error) {
+    res.json({ status: false });
+  }
+};
+
 module.exports = {
-  getAppDetails,
-  logout,
-  addResponse,
-  getYourStories,
-  getMyApps,
-  checkFields,
-  createApp,
-  getLoginPage,
-  validateSignin,
-  authorize,
-  getAccessToken,
-  getUserInfo,
-  signin,
   login,
-  isLoggedIn,
-  checkLoginStatus,
+  signin,
+  logout,
   addStory,
+  authorize,
+  getMyApps,
+  createApp,
+  isLoggedIn,
+  getUserInfo,
+  addResponse,
+  checkFields,
+  deleteStory,
+  getLoginPage,
+  getAllStories,
+  getAppDetails,
+  getYourStories,
+  deleteResponse,
+  validateSignin,
+  getAccessToken,
   getStoryDetails,
-  getAllStories
+  checkLoginStatus
 };
