@@ -61,11 +61,14 @@ const getStoryDetails = (storyId, reqOwner) =>
       return story;
     });
 
-const deleteResponse = (id, ownerId) =>
-  responses.clone().del().where({ id, ownerId });
+const deleteResponse = entries => responses.clone().del().where(entries);
 
 const deleteStory = (id, ownerId) =>
-  stories.clone().del().where({ id, ownerId });
+  stories
+    .clone()
+    .del()
+    .where({ id, ownerId })
+    .then(() => deleteResponse({ storyId: id }));
 
 module.exports = {
   addStory,

@@ -111,11 +111,12 @@ const isLoggedIn = async function (req, res) {
   try {
     const [userDetails] = await dataStore.getUserDetails({ id: userId });
     if (userDetails) {
-      return res.json({ loggedIn: true });
+      const { id, name } = userDetails;
+      return res.json({ loggedIn: true, userDetails: { id, name } });
     }
-    return res.json({ loggedIn: false });
+    return res.json({ loggedIn: false, userDetails: {} });
   } catch (error) {
-    return res.json({ loggedIn: false });
+    return res.json({ loggedIn: false, userDetails: {} });
   }
 };
 
@@ -192,10 +193,9 @@ const logout = function (req, res) {
 };
 
 const deleteResponse = async function (req, res) {
-  const { id } = req.body;
-  const { userId } = req.cookies;
+  const entries = { id: req.body.id, ownerId: +req.cookies.userId };
   try {
-    await dataStore.deleteResponse(id, userId);
+    await dataStore.deleteResponse(entries);
     res.json({ status: true });
   } catch (error) {
     res.json({ status: false });
