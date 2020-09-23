@@ -22,7 +22,8 @@ const {
   getYourStories,
   getAccessToken,
   getStoryDetails,
-  checkLoginStatus
+  checkLoginStatus,
+  getUserDataForAll
 } = require('./handlers');
 const app = express();
 
@@ -70,6 +71,7 @@ app.post('/api/getStory', [checkFields('id'), getStoryDetails]);
 app.post('/api/getAppDetails', [checkFields('id'), getAppDetails]);
 app.post('/api/addStory', [checkFields('title', 'body'), addStory]);
 app.post('/api/deleteResponse', [checkFields('id'), deleteResponse]);
+app.post('/api/userDetails', [checkFields('id'), getUserDataForAll]);
 app.post('/api/addResponse', [checkFields('storyId', 'message'), addResponse]);
 
 module.exports = { app };

@@ -213,6 +213,15 @@ const deleteStory = async function (req, res) {
   }
 };
 
+const getUserDataForAll = async function (req, res) {
+  const [userDetails] = await dataStore.getUserDetails({ id: req.body.id });
+  if (userDetails) {
+    delete userDetails.password;
+    return res.json(userDetails);
+  }
+  return res.json({});
+};
+
 module.exports = {
   login,
   signin,
@@ -234,5 +243,6 @@ module.exports = {
   validateSignin,
   getAccessToken,
   getStoryDetails,
-  checkLoginStatus
+  checkLoginStatus,
+  getUserDataForAll
 };
