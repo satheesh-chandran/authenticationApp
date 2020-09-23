@@ -162,8 +162,9 @@ const addStory = async function (req, res) {
 };
 
 const getStoryDetails = async function (req, res) {
+  const { userId } = req.cookies;
   try {
-    const storyDetails = await dataStore.getStoryDetails(req.body.id);
+    const storyDetails = await dataStore.getStoryDetails(req.body.id, +userId);
     res.json(storyDetails);
   } catch (error) {
     res.status(404).json({ status: 'Item not found' });

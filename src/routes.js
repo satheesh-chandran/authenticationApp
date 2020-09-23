@@ -60,10 +60,10 @@ app.post('/api/loginToApp', [checkFields('username', 'password'), login]);
 
 app.use(checkLoginStatus);
 
-app.get('/api/logout', [logout]);
-app.get('/api/getMyApps', [getMyApps]);
-app.get('/api/allStories', [getAllStories]);
-app.get('/api/yourStories', [getYourStories]);
+app.get('/api/logout', logout);
+app.get('/api/getMyApps', getMyApps);
+app.get('/api/allStories', getAllStories);
+app.get('/api/yourStories', getYourStories);
 
 app.post('/api/deleteStory', [checkFields('id'), deleteStory]);
 app.post('/api/getStory', [checkFields('id'), getStoryDetails]);

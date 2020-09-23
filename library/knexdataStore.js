@@ -24,19 +24,13 @@ const storyFormat = [
   'username'
 ];
 
-const addApplication = appDetails => applications.clone().insert(appDetails);
-
-const insertResponse = response => responses.clone().insert(response);
-
-const getUserDetails = entries => users.clone().where(entries);
-
-const getAppDetails = entries => applications.clone().where(entries);
-
 const addUsers = entries => users.clone().insert(entries);
-
 const addStory = entries => stories.clone().insert(entries);
-
+const getUserDetails = entries => users.clone().where(entries);
 const getAllStories = () => allStories.clone().select(storyFormat);
+const getAppDetails = entries => applications.clone().where(entries);
+const insertResponse = response => responses.clone().insert(response);
+const addApplication = appDetails => applications.clone().insert(appDetails);
 
 const getYourStories = entries =>
   allStories.clone().select(storyFormat).where(entries);
@@ -44,21 +38,28 @@ const getYourStories = entries =>
 const getStories = entries =>
   allStories.clone().select(storyFormat).where(entries);
 
-const includeResponse = (story, storyId) =>
+const includeResponse = (story, storyId, reqOwner) =>
   allResponses
     .clone()
     .where({ storyId })
     .then(responses => {
       story.responses = responses;
+      responses.forEach(res => {
+        res.isMine = res.ownerId == reqOwner;
+      });
       return story;
     });
 
-const getStoryDetails = storyId =>
+const getStoryDetails = (storyId, reqOwner) =>
   allStories
     .clone()
     .select(storyFormat)
     .where({ ['stories.id']: storyId })
-    .then(([story]) => includeResponse(story, storyId));
+    .then(([story]) => includeResponse(story, storyId, reqOwner))
+    .then(story => {
+      story.isMine = story.ownerId === reqOwner;
+      return story;
+    });
 
 const deleteResponse = (id, ownerId) =>
   responses.clone().del().where({ id, ownerId });
@@ -78,5 +79,5 @@ module.exports = {
   addApplication,
   getUserDetails,
   getYourStories,
-  getStoryDetails,
+  getStoryDetails
 };
