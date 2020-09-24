@@ -5,6 +5,7 @@ exports.up = function (knex) {
     await trx.schema.dropTableIfExists('responses');
     await trx.schema.dropTableIfExists('followers');
     await trx.schema.dropTableIfExists('applications');
+    await trx.schema.dropTableIfExists('savedStories');
 
     await trx.schema.createTable('users', function (table) {
       table.increments();
@@ -56,6 +57,14 @@ exports.up = function (knex) {
       table.foreign('followerId').references('users.id');
       table.primary(['leaderId', 'followerId']);
     });
+
+    await trx.schema.createTable('savedStories', function (table) {
+      table.integer('userId').notNullable();
+      table.integer('storyId').notNullable();
+      table.foreign('userId').references('users.id');
+      table.foreign('storyId').references('stories.id');
+      table.primary(['userId', 'storyId']);
+    });
   });
 };
 
@@ -66,5 +75,6 @@ exports.down = function (knex) {
     await trx.schema.dropTableIfExists('responses');
     await trx.schema.dropTableIfExists('followers');
     await trx.schema.dropTableIfExists('applications');
+    await trx.schema.dropTableIfExists('savedStories');
   });
 };

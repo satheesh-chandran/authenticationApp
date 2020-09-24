@@ -222,15 +222,29 @@ const getUserDataForAll = async function (req, res) {
   return res.json({});
 };
 
+const saveStory = (req, res) =>
+  dataStore
+    .saveStory({ userId: req.cookies.userId, storyId: req.body.id })
+    .then(() => res.json({ status: true }))
+    .catch(() => res.json({ status: false }));
+
+const unSaveStory = (req, res) =>
+  dataStore
+    .unSaveStory({ userId: req.cookies.userId, storyId: req.body.id })
+    .then(() => res.json({ status: true }))
+    .catch(() => res.json({ status: false }));
+
 module.exports = {
   login,
   signin,
   logout,
   addStory,
+  saveStory,
   authorize,
   getMyApps,
   createApp,
   isLoggedIn,
+  unSaveStory,
   getUserInfo,
   addResponse,
   checkFields,

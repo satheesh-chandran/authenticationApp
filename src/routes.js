@@ -6,18 +6,20 @@ const {
   logout,
   signin,
   addStory,
+  saveStory,
   getMyApps,
   createApp,
   authorize,
   isLoggedIn,
+  unSaveStory,
   getUserInfo,
   deleteStory,
   addResponse,
-  deleteResponse,
   checkFields,
   getLoginPage,
   getAppDetails,
   getAllStories,
+  deleteResponse,
   validateSignin,
   getYourStories,
   getAccessToken,
@@ -66,6 +68,8 @@ app.get('/api/getMyApps', getMyApps);
 app.get('/api/allStories', getAllStories);
 app.get('/api/yourStories', getYourStories);
 
+app.post('/api/saveStory', [checkFields('id'), saveStory]);
+app.post('/api/unSaveStory', [checkFields('id'), unSaveStory]);
 app.post('/api/deleteStory', [checkFields('id'), deleteStory]);
 app.post('/api/getStory', [checkFields('id'), getStoryDetails]);
 app.post('/api/getAppDetails', [checkFields('id'), getAppDetails]);

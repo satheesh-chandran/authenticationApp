@@ -1,9 +1,11 @@
 const knex = require('./knex');
 
 const users = knex('users').select();
-const applications = knex('applications').select();
 const stories = knex('stories').select();
 const responses = knex('responses').select();
+const applications = knex('applications').select();
+const savedStories = knex('savedStories').select();
+
 const allStories = stories
   .clone()
   .leftJoin(users.clone().as('users'), 'stories.ownerId', 'users.id');
@@ -21,22 +23,22 @@ const storyFormat = [
   'stories.claps as claps',
   'stories.receivedAt as receivedAt',
   'name',
-  'username'
+  'username',
+  'ownerId'
 ];
 
 const addUsers = entries => users.clone().insert(entries);
 const addStory = entries => stories.clone().insert(entries);
 const getUserDetails = entries => users.clone().where(entries);
+const saveStory = entries => savedStories.clone().insert(entries);
 const getAllStories = () => allStories.clone().select(storyFormat);
 const getAppDetails = entries => applications.clone().where(entries);
 const insertResponse = response => responses.clone().insert(response);
+const deleteResponse = entries => responses.clone().del().where(entries);
+const unSaveStories = entries => savedStories.clone().del().where(entries);
 const addApplication = appDetails => applications.clone().insert(appDetails);
-
-const getYourStories = entries =>
-  allStories.clone().select(storyFormat).where(entries);
-
-const getStories = entries =>
-  allStories.clone().select(storyFormat).where(entries);
+const getStories = entries => allStories.clone().select(storyFormat).where(entries);
+const getYourStories = entries => allStories.clone().select(storyFormat).where(entries);
 
 const includeResponse = (story, storyId, reqOwner) =>
   allResponses
@@ -61,8 +63,6 @@ const getStoryDetails = (storyId, reqOwner) =>
       return story;
     });
 
-const deleteResponse = entries => responses.clone().del().where(entries);
-
 const deleteStory = (id, ownerId) =>
   stories
     .clone()
@@ -73,10 +73,12 @@ const deleteStory = (id, ownerId) =>
 module.exports = {
   addStory,
   addUsers,
+  saveStory,
   getStories,
   deleteStory,
   getAllStories,
   getAppDetails,
+  unSaveStories,
   deleteResponse,
   insertResponse,
   addApplication,
