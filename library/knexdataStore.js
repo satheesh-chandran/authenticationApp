@@ -8,13 +8,15 @@ const savedStories = knex('savedStories').select();
 
 const allStories = stories
   .clone()
-  .leftJoin(users.clone().as('users'), 'stories.ownerId', 'users.id');
+  .leftJoin(users.clone().as('users'), 'stories.ownerId', 'users.id')
+  .orderBy('stories.receivedAt', 'desc');
 
 const allResponses = responses
   .clone()
   .select('responses.*', 'username')
   .leftJoin(users.clone().as('users'), 'responses.ownerId', 'users.id')
-  .as('allResponses');
+  .as('allResponses')
+  .orderBy('responses.receivedAt', 'desc');;
 
 const allSavedStories = savedStories
   .clone()
