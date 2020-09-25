@@ -24,6 +24,7 @@ exports.up = function (knex) {
       table.string('homePage', 30).notNullable();
       table.string('description', 30).notNullable();
       table.string('callbackUrl', 30).notNullable();
+      table.timestamp('createdAt').defaultTo(trx.fn.now());
       table.integer('ownerId').notNullable();
       table.foreign('ownerId').references('users.id');
     });
