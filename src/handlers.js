@@ -87,52 +87,6 @@ const getUserInfo = async function (req, res) {
   res.json(userDetails);
 };
 
-const signin = async function (req, res) {
-  try {
-    await dataStore.addUsers(req.body);
-    res.json({ status: true });
-  } catch (error) {
-    res.json({ status: false });
-  }
-};
-
-const login = async function (req, res) {
-  const { username, password } = req.body;
-  const [userDetails] = await dataStore.getUserDetails({ username, password });
-  if (userDetails) {
-    res.cookie('userId', userDetails.id);
-    return res.json({ status: true });
-  }
-  return res.json({ status: false });
-};
-
-const isLoggedIn = async function (req, res) {
-  const { userId } = req.cookies;
-  try {
-    const [userDetails] = await dataStore.getUserDetails({ id: userId });
-    if (userDetails) {
-      const { id, name } = userDetails;
-      return res.json({ loggedIn: true, userDetails: { id, name } });
-    }
-    return res.json({ loggedIn: false, userDetails: {} });
-  } catch (error) {
-    return res.json({ loggedIn: false, userDetails: {} });
-  }
-};
-
-const getAppDetails = async function (req, res) {
-  const entries = { id: req.body.id, ownerId: req.cookies.userId };
-  try {
-    const [details] = await dataStore.getAppDetails(entries);
-    if (details) {
-      return res.json({ protected: false, details });
-    }
-    return res.json({ protected: true }).status(405);
-  } catch (error) {
-    res.status(405).json({ protected: true });
-  }
-};
-
 const checkLoginStatus = async function (req, res, next) {
   const { userId } = req.cookies;
   try {
@@ -146,81 +100,96 @@ const checkLoginStatus = async function (req, res, next) {
   }
 };
 
-const getMyApps = async function (req, res) {
-  const entries = { ownerId: req.cookies.userId };
-  try {
-    const apps = await dataStore.getAppDetails(entries);
-    return res.json({ protected: false, apps });
-  } catch (error) {
-    res.status(405).json({ protected: true });
-  }
-};
+const signin = (req, res) =>
+  dataStore
+    .addUsers(req.body)
+    .then(() => res.json({ status: true }))
+    .catch(() => res.json({ status: false }));
 
-const addStory = async function (req, res) {
-  const ownerId = req.cookies.userId;
-  const [storyId] = await dataStore.addStory({ ...req.body, ownerId });
-  res.json({ storyId });
-};
+const login = (req, res) =>
+  dataStore.getUserDetails(req.body).then(([userDetails]) => {
+    if (userDetails) {
+      return res.cookie('userId', userDetails.id).json({ status: true });
+    }
+    return res.json({ status: false });
+  });
 
-const getStoryDetails = async function (req, res) {
-  const { userId } = req.cookies;
-  try {
-    const storyDetails = await dataStore.getStoryDetails(req.body.id, +userId);
-    res.json(storyDetails);
-  } catch (error) {
-    res.status(404).json({ status: 'Item not found' });
-  }
-};
+const isLoggedIn = (req, res) =>
+  dataStore
+    .getUserDetails({ id: req.cookies.userId })
+    .then(([userDetails]) => {
+      if (userDetails) {
+        const { id, name } = userDetails;
+        return res.json({ loggedIn: true, userDetails: { id, name } });
+      }
+      return res.json({ loggedIn: false, userDetails: {} });
+    })
+    .catch(() => res.json({ loggedIn: false, userDetails: {} }));
 
-const getAllStories = async function (req, res) {
-  const stories = await dataStore.getAllStories();
-  res.json(stories);
-};
+const getAppDetails = (req, res) =>
+  dataStore
+    .getAppDetails({ id: req.body.id, ownerId: req.cookies.userId })
+    .then(([details]) => {
+      if (details) {
+        return res.json({ protected: false, details });
+      }
+      return res.status(405).json({ protected: true });
+    })
+    .catch(() => res.status(405).json({ protected: true }));
 
-const getYourStories = async function (req, res) {
-  res.json(await dataStore.getYourStories({ ownerId: req.cookies.userId }));
-};
+const getMyApps = (req, res) =>
+  dataStore
+    .getAppDetails({ ownerId: req.cookies.userId })
+    .then(apps => res.json({ protected: false, apps }))
+    .catch(() => res.status(405).json({ protected: true }));
 
-const addResponse = async function (req, res) {
-  const ownerId = req.cookies.userId;
-  const { storyId, message } = req.body;
-  await dataStore.insertResponse({ storyId, ownerId, message });
-  res.json({ status: true });
-};
+const addStory = (req, res) =>
+  dataStore
+    .addStory({ ...req.body, ownerId: req.cookies.userId })
+    .then(storyId => res.json({ storyId }));
 
-const logout = function (req, res) {
-  res.clearCookie('userId').json({ status: true });
-};
+const getStoryDetails = (req, res) =>
+  dataStore
+    .getStoryDetails(req.body.id, +req.cookies.userId)
+    .then(storyDetails => res.json(storyDetails))
+    .catch(() => res.status(404).json({ status: 'Item not found' }));
 
-const deleteResponse = async function (req, res) {
-  const entries = { id: req.body.id, ownerId: +req.cookies.userId };
-  try {
-    await dataStore.deleteResponse(entries);
-    res.json({ status: true });
-  } catch (error) {
-    res.json({ status: false });
-  }
-};
+const getAllStories = (req, res) =>
+  dataStore.getAllStories().then(stories => res.json(stories));
 
-const deleteStory = async function (req, res) {
-  const { id } = req.body;
-  const { userId } = req.cookies;
-  try {
-    await dataStore.deleteStory(id, userId);
-    res.json({ status: true });
-  } catch (error) {
-    res.json({ status: false });
-  }
-};
+const getYourStories = (req, res) =>
+  dataStore
+    .getYourStories({ ownerId: req.cookies.userId })
+    .then(stories => res.json(stories));
 
-const getUserDataForAll = async function (req, res) {
-  const [userDetails] = await dataStore.getUserDetails({ id: req.body.id });
-  if (userDetails) {
-    delete userDetails.password;
-    return res.json(userDetails);
-  }
-  return res.json({});
-};
+const addResponse = (req, res) =>
+  dataStore
+    .insertResponse({ ...req.body, ownerId: req.cookies.userId })
+    .then(() => res.json({ status: true }))
+    .catch(() => res.json({ status: true }));
+
+const logout = (req, res) => res.clearCookie('userId').json({ status: true });
+
+const deleteResponse = (req, res) =>
+  dataStore
+    .deleteResponse({ id: req.body.id, ownerId: +req.cookies.userId })
+    .then(() => res.json({ status: true }))
+    .catch(() => res.json({ status: false }));
+
+const deleteStory = (req, res) =>
+  dataStore
+    .deleteStory(req.body.id, req.cookies.userId)
+    .then(() => res.json({ status: true }))
+    .catch(() => res.json({ status: true }));
+
+const getUserDataForAll = (req, res) =>
+  dataStore.getUserDetails({ id: req.body.id }).then(([userDetails]) => {
+    if (userDetails) {
+      delete userDetails.password;
+      return res.json(userDetails);
+    }
+    return res.json({});
+  });
 
 const saveStory = (req, res) =>
   dataStore
@@ -233,6 +202,12 @@ const unSaveStory = (req, res) =>
     .unSaveStory({ userId: req.cookies.userId, storyId: req.body.id })
     .then(() => res.json({ status: true }))
     .catch(() => res.json({ status: false }));
+
+const getSavedStories = (req, res) =>
+  dataStore
+    .getSavedStories(req.cookies.userId)
+    .then(stories => res.json(stories))
+    .catch(() => res.status(404).json([]));
 
 module.exports = {
   login,
@@ -256,6 +231,7 @@ module.exports = {
   deleteResponse,
   validateSignin,
   getAccessToken,
+  getSavedStories,
   getStoryDetails,
   checkLoginStatus,
   getUserDataForAll

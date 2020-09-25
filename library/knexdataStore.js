@@ -16,6 +16,14 @@ const allResponses = responses
   .leftJoin(users.clone().as('users'), 'responses.ownerId', 'users.id')
   .as('allResponses');
 
+const allSavedStories = savedStories
+  .clone()
+  .leftJoin(
+    allStories.clone().as('allStories'),
+    'savedStories.storyId',
+    'allStories.id'
+  );
+
 const storyFormat = [
   'stories.id as id',
   'stories.title as title',
@@ -27,12 +35,12 @@ const storyFormat = [
   'ownerId'
 ];
 
-const addUsers = entries => users.clone().insert(entries);
-const addStory = entries => stories.clone().insert(entries);
 const getUserDetails = entries => users.clone().where(entries);
+const addUsers = userDetails => users.clone().insert(userDetails);
 const saveStory = entries => savedStories.clone().insert(entries);
 const getAllStories = () => allStories.clone().select(storyFormat);
 const getAppDetails = entries => applications.clone().where(entries);
+const addStory = storyDetails => stories.clone().insert(storyDetails);
 const insertResponse = response => responses.clone().insert(response);
 const deleteResponse = entries => responses.clone().del().where(entries);
 const unSaveStories = entries => savedStories.clone().del().where(entries);
@@ -70,6 +78,10 @@ const deleteStory = (id, ownerId) =>
     .where({ id, ownerId })
     .then(() => deleteResponse({ storyId: id }));
 
+const getSavedStories = () => {
+  return allSavedStories.clone().select();
+};
+
 module.exports = {
   addStory,
   addUsers,
@@ -84,5 +96,6 @@ module.exports = {
   addApplication,
   getUserDetails,
   getYourStories,
-  getStoryDetails
+  getStoryDetails,
+  getSavedStories
 };
