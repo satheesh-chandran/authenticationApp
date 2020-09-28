@@ -31,7 +31,7 @@ const app = express();
 
 app.use(morgan('tiny'));
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('build'));
 app.use(cookieParser());
 
 app.get('/login/oauth/authorize', getLoginPage);

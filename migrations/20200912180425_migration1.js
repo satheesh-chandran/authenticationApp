@@ -18,12 +18,12 @@ exports.up = function (knex) {
 
     await trx.schema.createTable('applications', function (table) {
       table.increments();
-      table.string('clientId', 50).notNullable();
-      table.string('clientSecret', 50).notNullable();
-      table.string('name', 30).notNullable();
-      table.string('homePage', 30).notNullable();
-      table.string('description', 30).notNullable();
-      table.string('callbackUrl', 30).notNullable();
+      table.string('clientId', 100).notNullable();
+      table.string('clientSecret', 100).notNullable();
+      table.string('name', 100).notNullable();
+      table.string('homePage', 100).notNullable();
+      table.string('description', 100).notNullable();
+      table.string('callbackUrl', 100).notNullable();
       table.timestamp('createdAt').defaultTo(trx.fn.now());
       table.integer('ownerId').notNullable();
       table.foreign('ownerId').references('users.id');
