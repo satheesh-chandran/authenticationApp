@@ -23,7 +23,7 @@ const { DbClient, DatabaseUrlT, DatabaseUrl, PG_database, DATABASE_URL } = env;
 module.exports = {
   development: {
     client: 'pg',
-    connection: { database: PG_database, host: DATABASE_URL },
+    connection: env.DATABASE_URL,
     seeds: { directory: `${__dirname}/seeds` }
   }
 };
