@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "createdb blog_app && node -r dotenv/config server.js",
+    "start": "knex migrate:latest && node -r dotenv/config server.js",
     "dev": "nodemon -r dotenv/config server.js"
   },
   "keywords": [],
