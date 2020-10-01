@@ -39,7 +39,7 @@ api.use(checkLoginStatus);
 api.get('/logout', logout);
 api.get('/getMyApps', getMyApps);
 api.get('/allStories', getAllStories);
-api.get('/yourStories', getYourStories);
+api.get('/myStories', getYourStories);
 
 api.post('/saveStory', [checkFields('id'), saveStory]);
 api.post('/unSaveStory', [checkFields('id'), unSaveStory]);

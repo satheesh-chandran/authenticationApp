@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const path = require('path');
 const {
   authorize,
   isLoggedIn,
@@ -35,5 +36,9 @@ app.post('/login/oauth/access_token', [
 ]);
 
 app.use('/api', api);
+
+app.get('/*', (req, res) =>
+  res.sendFile(path.join(__dirname, '../build', 'index.html'))
+);
 
 module.exports = { app };
